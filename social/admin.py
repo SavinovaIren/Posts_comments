@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.urls import reverse
 from django.utils.html import format_html
-
+from django.urls import reverse
+from urllib.parse import quote as urlquote
+from django.contrib.admin.utils import quote
 from social.models import Post, Comment
 
 User = get_user_model()
@@ -13,20 +14,21 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'text', 'photo', 'author_link', 'comment',
+    list_display = ('title', 'text', 'photo', 'author_link',
                     'updated', 'created')
     list_filter = ('created',)
 
     def author_link(self, obj):
-        author = obj.author
-        url = reverse("admin:social_author_changelist") + str(author.pk)
-        return format_html(f'<a href="{url}"> {author} </a>')
+        auth = obj.author
+        url = reverse("admin:social_user_changelist") + str(auth.pk)
+        return format_html(f'<a href="{url}">{auth}</a>')
 
     author_link.short_description = "Автор"
 
 
+
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('author', 'text', 'updated', 'created')
+    list_display = ('creator', 'text_comment', 'updated', 'created')
 
 
 admin.site.register(User, UserAdmin)

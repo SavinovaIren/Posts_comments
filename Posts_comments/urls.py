@@ -16,7 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework import routers
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+from social import views
+
+router = routers.SimpleRouter()
+router.register(r'users', views.UserViewSet)
+router.register(r'posts', views.PostViewSet)
+router.register(r'comments', views.CommentViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-]
+] + router.urls
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

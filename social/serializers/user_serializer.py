@@ -1,8 +1,9 @@
-from typing import re
+import re
 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
+from datetime import date, timedelta
 
 User = get_user_model()
 
@@ -11,8 +12,8 @@ class PasswordValidator:
     def __call__(self, value):
         if len(value) < 8:
             raise serializers.ValidationError("Пароль должен иметь не менее 8 символов")
-        elif re.search('[0-9]', value) is None:
-            raise serializers.ValidationError("Пароль должен содержать цифры")
+        elif re.search('[0-9]', value) and re.search('[a-zA-z]', value) is None:
+            raise serializers.ValidationError("Пароль должен содержать цифры и буквы")
         else:
             return value
 
@@ -25,16 +26,35 @@ class EmailValidator:
         else:
             return value
 
+class AgeValidator:
+    def __call__(self, value):
+        age = (date.today() - value) // timedelta(days=365.2425)
+        if age < 18:
+            raise serializers.ValidationError("Писать посты могут только пользователи, достигшие 18 лет")
+        else:
+            return value
 
 
 class UserSerializer(ModelSerializer):
-    birth_date = serializers.DateField(
-        format='%d.%m.%Y',  # из базы дата будет вытаскиваться в формате "25.10.2021"
-        input_formats=['%d.%m.%Y',
-                       'iso-8601', ])
     password = serializers.CharField(validators=[PasswordValidator()])
     email = serializers.CharField(validators=[EmailValidator()])
+
+    def create(self, validated_data):
+        reader = super().create(validated_data)
+        reader.set_password(reader.password)
+        reader.save()
+        return reader
+
+    def update(self, instance, validated_data):
+        reader = super().update(instance, validated_data)
+        validated_data.pop('birth_date')
+        reader.set_password(reader.password)
+        reader.save()
+        return reader
+
 
     class Meta:
         model = User
         fields = '__all__'
+
+
