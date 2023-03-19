@@ -26,6 +26,7 @@ class EmailValidator:
         else:
             return value
 
+
 class AgeValidator:
     def __call__(self, value):
         age = (date.today() - value) // timedelta(days=365.2425)
@@ -52,9 +53,6 @@ class UserSerializer(ModelSerializer):
         reader.save()
         return reader
 
-
     class Meta:
         model = User
         fields = '__all__'
-
-

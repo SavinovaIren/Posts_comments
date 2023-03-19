@@ -28,7 +28,7 @@ class PostAdmin(admin.ModelAdmin):
 
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('creator', 'text_comment', 'updated', 'created')
+    list_display = ('creator', 'text_comment', 'updated', 'created', 'post')
 
 
 admin.site.register(User, UserAdmin)

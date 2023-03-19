@@ -10,6 +10,7 @@ User = get_user_model()
 class CommentSerializer(ModelSerializer):
     creator = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username')
     post = serializers.SlugRelatedField(queryset=Post.objects.all(), slug_field='title')
+
     class Meta:
         model = Comment
         fields = ['id', 'text_comment', 'creator', 'created', 'updated', 'post']
