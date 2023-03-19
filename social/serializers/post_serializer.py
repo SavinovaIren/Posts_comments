@@ -29,6 +29,8 @@ class PostSerializer(ModelSerializer):
 
     def validate(self, value):
         author_age = value.get("author")
+        if author_age.birth_date is None:
+            raise serializers.ValidationError("Поле возраста должно быть заполнено")
         age = (timezone.now().date() - author_age.birth_date).days // 365
         if age < 18:
             raise serializers.ValidationError("Посты могут писать только пользователи старше 18 лет")

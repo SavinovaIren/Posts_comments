@@ -6,7 +6,7 @@ from Posts_comments import settings
 
 class User(AbstractUser):
     phone = models.BigIntegerField(verbose_name="Номер телефона")
-    birth_date = models.DateField(null=False, editable=False, blank=False)
+    birth_date = models.DateField(null=False)
     updated = models.DateTimeField(auto_now=True, verbose_name="Дата редактирования")
 
     class Meta:

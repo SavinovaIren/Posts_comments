@@ -1,4 +1,3 @@
-
 """Posts_comments URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -20,6 +19,7 @@ from rest_framework import routers
 
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from social import views
 
@@ -29,7 +29,9 @@ router.register(r'posts', views.PostViewSet)
 router.register(r'comments', views.CommentViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-] + router.urls
+                  path('admin/', admin.site.urls),
+                  path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+                  path('refresh/', TokenRefreshView.as_view(), name='')
+              ] + router.urls
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -27,15 +27,6 @@ class EmailValidator:
             return value
 
 
-class AgeValidator:
-    def __call__(self, value):
-        age = (date.today() - value) // timedelta(days=365.2425)
-        if age < 18:
-            raise serializers.ValidationError("Писать посты могут только пользователи, достигшие 18 лет")
-        else:
-            return value
-
-
 class UserSerializer(ModelSerializer):
     password = serializers.CharField(validators=[PasswordValidator()])
     email = serializers.CharField(validators=[EmailValidator()])
@@ -48,7 +39,6 @@ class UserSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         reader = super().update(instance, validated_data)
-        validated_data.pop('birth_date')
         reader.set_password(reader.password)
         reader.save()
         return reader
